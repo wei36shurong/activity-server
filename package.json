@@ -1,10 +1,19 @@
 {
-  "name": "socket-chat-example",
-  "version": "0.0.1",
-  "description": "my first socket.io app",
+  "name": "live",
+  "version": "0.1.0",
+  "description": "live server",
   "dependencies": {
-    "express": "^4.15.2",
-    "socket.io": "^1.7.3"
+    "socket.io": "^2.0.0",
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.8.1",
+    "serve-favicon": "~2.4.2",
+    "mongodb": "*",
+    "monk": "*",
+    "request": "^2.81.0"
   },
   "scripts": {
     "start": "node index.js"

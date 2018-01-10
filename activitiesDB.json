@@ -1,0 +1,117 @@
+{
+  "config":{
+    "title":"2017年福信集团年会",
+    "adress":"暂无地址",
+    "headImg_url":"http://image.yylhealth.com/%E5%A4%B4%E5%9B%BE.png",
+    "backgroundImg_url":"http://image.yylhealth.com/%E5%96%9C%E8%BF%8E%E5%8D%8E%E8%AF%9E.jpeg",
+    "longitude":"",
+    "latitude":"",
+    "checkInControl":"none",
+    "votesControl":[
+      0,
+      0,
+      0
+    ]
+  },
+  "users":[
+    {
+      "user_id":"",
+      "type":"admit"
+    },
+    {
+      "user_id":"",
+      "type":"normal"
+    }
+  ],
+  "draws":[
+    {
+      "title":"特等奖：iPhone X",
+      "image_url":"",
+      "num":1,
+      "winners":[
+
+      ]
+    },
+    {
+      "title":"一等奖：iPhone 8",
+      "image_url":"",
+      "num":5,
+      "winners":[
+
+      ]
+    },
+    {
+      "title":"二等奖：iPad",
+      "image_url":"",
+      "num":10,
+      "winners":[
+
+      ]
+    }
+  ],
+  "votes":[
+    {
+      "title":"A组选手对决",
+      "items":[
+        {
+          "title":"张宁",
+          "image_url":"http://image.yylhealth.com/%E5%8D%81%E5%85%83.jpeg",
+          "voters":[
+
+          ],
+          "bonus":0
+        },
+        {
+          "title":"黄滢",
+          "image_url":"http://image.yylhealth.com/%E6%96%B0%E6%A2%97.jpeg",
+          "voters":[
+
+          ],
+          "bonus":0
+        }
+      ]
+    },
+    {
+      "title":"B组选手对决",
+      "items":[
+        {
+          "title":"郑俊杰",
+          "image_url":"http://image.yylhealth.com/%E5%90%B4%E4%BA%A6%E5%87%A1.jpeg",
+          "voters":[
+
+          ],
+          "bonus":0
+        },
+        {
+          "title":"何广明",
+          "image_url":"http://image.yylhealth.com/%E5%90%B4%E5%BD%A6%E7%A5%96.jpeg",
+          "voters":[
+
+          ],
+          "bonus":0
+        }
+      ]
+    },
+    {
+      "title":"C组选手对决",
+      "items":[
+        {
+          "title":"石溪",
+          "image_url":"http://image.yylhealth.com/%E5%90%B4%E4%BA%A6%E5%87%A1.jpeg",
+          "voters":[
+
+          ],
+          "bonus":0
+        },
+        {
+          "title":"赖德明",
+          "image_url":"http://image.yylhealth.com/%E5%90%B4%E5%BD%A6%E7%A5%96.jpeg",
+          "voters":[
+
+          ],
+          "bonus":0
+        }
+      ]
+    }
+  ]
+}
