@@ -3,8 +3,9 @@ const app = require('express')()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const port = process.env.PORT || 3000
-const users = require('./routers/CRUD')('users')
+const users = require('./routers/users')
 const activities = require('./routers/activities')
+const login = require('./routers/login')
 const bodyParser = require('body-parser')
 
 app.use(express.static('dist'))
@@ -26,13 +27,10 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/activities', activities)
 app.use('/users', users)
+app.use('/login', login)
 
-app.get('/', function (req, res) {
-	res.sendFile(__dirname + '/index.html')
-})
 
 async function emitSocketEvent (req, res) {
-	console.log(req.params)
 	const event = req.params.eventName || req.body.eventName || req.body.event
 	console.log(event)
 	io.emit(event)
@@ -47,6 +45,12 @@ app.post('/router', async (req, res) => {
 	res.send(path)
 })
 
+
+app.use(function (req, res, next) {
+	var err = new Error('Not Found')
+	err.status = 404
+	next(err)
+})
 // error handler
 app.use(function (err, req, res) {
 	// set locals, only providing error in development
@@ -58,10 +62,8 @@ app.use(function (err, req, res) {
 	res.render('error')
 })
 
-app.use(function (req, res, next) {
-	var err = new Error('Not Found')
-	err.status = 404
-	next(err)
+app.get('/', function (req, res) {
+	res.sendFile(__dirname + '/index.html')
 })
 
 app.set('port', process.env.PORT || 3000)

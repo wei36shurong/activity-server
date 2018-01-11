@@ -6,9 +6,9 @@ module.exports = function (collectionName) {
 	const collection = db.get(collectionName)
 	const {to} = require('../utils/') 
 
-	router.get('/(:id)?', async (req, res) => {
+	router.get('/(:_id)?', async (req, res, next) => {
 		let { filter, ids } = req.query
-		const {id: _id} = req.params
+		const {_id} = req.params
 		if (filter) {
 			filter = JSON.parse(req.query.filter || '{}')
 			const [err, data] = await to(collection.find(filter))
@@ -18,9 +18,9 @@ module.exports = function (collectionName) {
 		}
 		if (ids) {
 			ids = ids.split(',')
-			const [err, data] = await to(Promise.all(ids.map(id => {
+			const [err, data] = await to(Promise.all(ids.map(_id => {
 				return new Promise(async (resolve, reject) => {
-					const [err, data] = await to(collection.findOne({_id: id}))
+					const [err, data] = await to(collection.findOne({_id}))
 					if (err) reject(err)
 					resolve(data)
 				})
@@ -30,15 +30,18 @@ module.exports = function (collectionName) {
 			return
 		}
 		if (_id) {
-			if (!_id) { res.sendStatus(400); return }
-			const [err, data] = await to(collection.findOne({_id}))
-			if (err) throw new Error(err)
-			res.send(data)
+			// 标准的catch方式，to似乎没法让错误变成catched promise error
+			try {
+				const data = await collection.findOne({_id})
+				if (!data) {res.sendStatus(404);return}
+				res.send(data)
+			} catch (err) {
+				next(err)
+				return
+			}
 		}
-		const [err, data] = await to(collection.find({}))
-		if (err) throw new Error(err)
+		const data = await collection.find({})
 		res.send(data)
-		
 	})
 
 	router.post('/searches', async (req, res) => {
