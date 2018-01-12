@@ -27,7 +27,14 @@ router.post('/:_id/users', async (req, res) => {
 	const {_id: activityId} = req.params
 	const openid = await getOpenid(session)
 	const {_id: userId} = await users.findOne({openid})
-	await activities.findOneAndUpdate({_id: activityId}, { 
+	const hasSignedIn = await activities.findOne({_id: activityId}, { 
+		$in: { users:  [userId] } 
+	})
+	if (hasSignedIn) { 
+		res.status(400).send('user has already voted')
+		return 
+	}
+	const {users} = await activities.findOneAndUpdate({_id: activityId}, { 
 		$push: { 'users':  userId } 
 	})
 	const user = await users.findOneAndUpdate({_id: userId}, { 
@@ -37,6 +44,65 @@ router.post('/:_id/users', async (req, res) => {
 	res.status(201).send(user)
 })
 
+router.delete('/:_id/votes/:vote_index/options/:item_index/voters', async (req, res, next) => {
+	const {_id, vote_index, item_index} = req.params
+	const {session} = req.body
+	let {userId} = req.body
+	try {
+		if (session) { 
+			const openid = await getOpenid(session)
+			const {_id} = await users.findOne({openid}, '_id')
+			userId = _id
+		}
+		await activities.findOneAndUpdate({_id}, { 
+			$pull: { [`votes.${vote_index}.options.${item_index}.voters`]: userId } 
+		})
+		res.sendStatus(200)
+	} catch(error) {
+		next(error)
+	}
+})
+router.post('/:_id/votes/:vote_index/options/:item_index/voters', async (req, res, next) => {
+	const {_id, vote_index, item_index} = req.params
+	const {session} = req.body
+	let {userId} = req.body
+	try {
+		if (session) { 
+			const openid = await getOpenid(session)
+			const {_id} = await users.findOne({openid}, '_id')
+			userId = _id
+		}
+		const {votes} = await activities.findOne({_id}, 'votes')
+		const voters = votes[vote_index].options[item_index].voters
+		const hasVoted = voters.some(id => String(id) == userId)
+		if (hasVoted) { 
+			res.status(400).send('user has already voted')
+			return 
+		}
+		const activity = await activities.findOneAndUpdate({_id}, { 
+			$push: { [`votes.${vote_index}.options.${item_index}.voters`]: userId } 
+		})
+		if (!activity) {res.sendStatus(404); return}
+		res.status(201).send(activity.votes[vote_index].options[item_index].voters)
+	} catch (error) {
+		next(error)
+	}
+})
+
+router.post('/:_id/votes/:vote_index/options/:item_index/bonus', async (req, res, next) => {
+	const {_id, vote_index, item_index} = req.params
+	const {bonus} = req.body
+	try {
+		const data = await activities.findOneAndUpdate({_id}, { 
+			$set: { [`votes.${vote_index}.options.${item_index}.bonus`]: bonus } 
+		})
+		if (!data) {res.sendStatus(404); return}
+		res.status(201).send(data.votes[vote_index].options[item_index])
+	} catch (error) {
+		next(error)
+	}
+})
+
 router.put('/:_id/votes/:index/status', async (req, res) => {
 	const {_id, index} = req.params
 	const {status} = req.body
@@ -44,19 +110,6 @@ router.put('/:_id/votes/:index/status', async (req, res) => {
 		$set: { [`votes.${index}.status`]: status }
 	}))
 	res.status(201).send(data)
-})
-
-router.post('/_:id/votes/:vote_index/items/:item_index/voters', async (req, res) => {
-	const {_id, vote_index, item_index} = req.params
-	const {session, userId} = req.body
-	if (session) { return }
-	if (userId) {
-		const [, data] = await to(activities.findOneAndUpdate({_id}, { 
-			$push: { [`votes.${vote_index}.items.${item_index}.voters`]: userId } 
-		}))
-		res.send(data)
-		return
-	}
 })
 
 router.post('/:_id/draws/:index/winners', async (req, res) => {
@@ -81,6 +134,7 @@ router.get('/:_id/votes', async (req, res) => {
 	res.send(data)
 })
 
-
 router.use(CRUD)
+
+
 module.exports = router

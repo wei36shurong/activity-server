@@ -8,7 +8,7 @@ module.exports = {
 	getOpenid: (session) => {
 		return new Promise(async (resolve, reject) => {
 			const data = await sessions.findOne({ session })
-			data ? resolve(data.openid) : reject(new Error('couldn not find user'))
+			data ? resolve(data.openid) : reject(new Error('could not find user'))
 		})
 	},
 	getMyUserInfo: (openid) => {

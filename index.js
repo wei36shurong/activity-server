@@ -29,7 +29,6 @@ app.use('/activities', activities)
 app.use('/users', users)
 app.use('/login', login)
 
-
 async function emitSocketEvent (req, res) {
 	const event = req.params.eventName || req.body.eventName || req.body.event
 	console.log(event)
@@ -44,7 +43,6 @@ app.post('/router', async (req, res) => {
 	io.emit('ROUTER', {path})
 	res.send(path)
 })
-
 
 app.use(function (req, res, next) {
 	var err = new Error('Not Found')

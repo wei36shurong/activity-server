@@ -6,6 +6,10 @@ module.exports = function (collectionName) {
 	const collection = db.get(collectionName)
 	const {to} = require('../utils/') 
 
+	// router.get('/:_id', async (req, res, next) => {
+	// 	// TODO 这里可以对id进行校验如果没有的话，返回404
+	// })
+
 	router.get('/(:_id)?', async (req, res, next) => {
 		let { filter, ids } = req.query
 		const {_id} = req.params
@@ -37,9 +41,10 @@ module.exports = function (collectionName) {
 				res.send(data)
 			} catch (err) {
 				next(err)
-				return
 			}
+			return
 		}
+		// 请求全部的列表
 		const data = await collection.find({})
 		res.send(data)
 	})
@@ -56,12 +61,20 @@ module.exports = function (collectionName) {
 		res.send(data)
 	})
 
-	router.put('/(:id)?', async (req, res) => {
+	router.put('/:id', async (req, res) => {
 		const _id = req.params.id || req.body._id
-		if (!_id) { res.sendStatus(400); return }
+		if (!_id) { res.sendStatus(405); return }
 		const [err, data] = await to(collection.findOneAndUpdate({_id}, req.body))
 		if (err) throw new Error(err)
 		res.send(data)
 	})
+
+	router.delete('/:id', async (req, res) => {
+		const _id = req.params.id || req.body._id
+		if (!_id) { res.sendStatus(405); return }
+		await collection.findOneAndDelete({_id})
+		res.sendStatus(200)
+	})
+
 	return router
 }
