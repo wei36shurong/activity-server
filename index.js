@@ -4,7 +4,7 @@ const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const port = process.env.PORT || 3000
 const users = require('./routers/users')
-const activities = require('./routers/activities')
+const activities = require('./routers/activities')(io)
 const login = require('./routers/login')
 const bodyParser = require('body-parser')
 
@@ -17,8 +17,17 @@ app.use(function(req, res, next) {
 })
 
 app.use(function timeLog (req, res, next) {
-	console.log(req.method, req.originalUrl)
 	console.log('Time: ', (new Date()).toString())
+	console.log(req.method, req.originalUrl)
+	next()
+})
+
+// TODO 打印出所有的请求
+app.route('*').post((req, res, next) => {
+	// console.log('post request body:', req.body)
+	next()
+}).put((req, res, next) => {
+	// console.log('put request body:', req.body)
 	next()
 })
 
@@ -40,6 +49,7 @@ app.post('/emit', emitSocketEvent)
 app.post('/events(/:eventName)?', emitSocketEvent)
 app.post('/router', async (req, res) => {
 	const path = req.body.path
+	console.log(path)
 	io.emit('ROUTER', {path})
 	res.send(path)
 })

@@ -21,7 +21,6 @@ router.put('/me', async (req, res) => {
 	const {session} = req.body
 	const [err, openid] = await to(getOpenid(session))
 	let {myUserInfo} = req.body
-	console.log(myUserInfo)
 	if (err) { res.sendStatus(404); return }
 	myUserInfo.openid = openid
 	console.log(openid)
